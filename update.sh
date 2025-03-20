@@ -96,7 +96,7 @@ remove_unwanted_packages() {
         "smartdns" "mosdns" "adguardhome" "ddns-go" "naiveproxy" "shadowsocks-rust"
         "sing-box" "v2ray-core" "v2ray-geodata" "v2ray-plugin" "tuic-client"
         "chinadns-ng" "ipt2socks" "tcping" "trojan-plus" "simple-obfs"
-        "shadowsocksr-libev" "dae" "daed" "mihomo" "geoview" "tailscale" "open-app-filter" "gecoosac"
+        "shadowsocksr-libev" "dae" "daed" "mihomo" "geoview" "tailscale" "open-app-filter"
     )
     local small8_packages=(
         "ppp" "firewall" "dae" "daed" "daed-next" "libnftnl" "nftables" "dnsmasq"
@@ -141,7 +141,7 @@ install_small8() {
         luci-app-store quickstart luci-app-quickstart luci-app-istorex luci-app-cloudflarespeedtest \
         luci-theme-argon netdata luci-app-netdata lucky luci-app-lucky luci-app-openclash luci-app-homeproxy \
         luci-app-amlogic nikki luci-app-nikki tailscale luci-app-tailscale oaf open-app-filter luci-app-oaf \
-        easytier luci-app-easytier luci-app-gecoosac luci-app-pushbot gecoosac
+        easytier luci-app-easytier luci-app-gecoosac luci-app-pushbot luci-app-fileassistant luci-app-usb-printer
 }
 
 install_feeds() {
