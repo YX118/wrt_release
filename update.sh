@@ -154,7 +154,7 @@ install_small8() {
         adguardhome luci-app-adguardhome ddns-go luci-app-ddns-go taskd luci-lib-xterm luci-lib-taskd \
         luci-app-store quickstart luci-app-quickstart luci-app-istorex luci-app-cloudflarespeedtest \
         luci-theme-argon netdata luci-app-netdata lucky luci-app-lucky luci-app-openclash luci-app-homeproxy \
-        luci-app-amlogic nikki luci-app-nikki tailscale luci-app-tailscale oaf open-app-filter luci-app-oaf \
+        luci-app-amlogic tailscale luci-app-tailscale nikki luci-app-nikki tailscale luci-app-tailscale oaf open-app-filter luci-app-oaf \
         easytier luci-app-easytier msd_lite luci-app-msd_lite luci-app-pushbot luci-app-usb-printer luci-app-poweroffdevice luci-app-fileassistant
 }
 
@@ -424,6 +424,7 @@ src/gz openwrt_luci https://downloads.immortalwrt.org/releases/24.10-SNAPSHOT/pa
 src/gz openwrt_packages https://downloads.immortalwrt.org/releases/24.10-SNAPSHOT/packages/aarch64_cortex-a53/packages/
 src/gz openwrt_routing https://downloads.immortalwrt.org/releases/24.10-SNAPSHOT/packages/aarch64_cortex-a53/routing/
 src/gz openwrt_telephony https://downloads.immortalwrt.org/releases/24.10-SNAPSHOT/packages/aarch64_cortex-a53/telephony/
+src/gz openwrt_kiddin9 https://dl.openwrt.ai/releases/24.10/packages/aarch64_cortex-a53/kiddin9/
 EOF
 
         sed -i "/define Package\/default-settings\/install/a\\
