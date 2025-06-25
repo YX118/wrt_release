@@ -100,6 +100,9 @@ remove_unwanted_packages() {
         "shadowsocksr-libev" "dae" "daed" "mihomo" "geoview" "tailscale" "open-app-filter"
         "msd_lite"
     )
+    local packages_utils=(
+        "cups"
+    )
     local small8_packages=(
         "ppp" "firewall" "dae" "daed" "daed-next" "libnftnl" "nftables" "dnsmasq"
     )
@@ -116,6 +119,12 @@ remove_unwanted_packages() {
     for pkg in "${packages_net[@]}"; do
         if [[ -d ./feeds/packages/net/$pkg ]]; then
             \rm -rf ./feeds/packages/net/$pkg
+        fi
+    done
+
+    for pkg in "${packages_utils[@]}"; do
+        if [[ -d ./feeds/packages/utils/$pkg ]]; then
+            \rm -rf ./feeds/packages/utils/$pkg
         fi
     done
 
@@ -156,7 +165,7 @@ install_small8() {
         luci-app-store quickstart luci-app-quickstart luci-app-istorex luci-app-cloudflarespeedtest \
         luci-theme-argon netdata luci-app-netdata lucky luci-app-lucky luci-app-openclash luci-app-homeproxy \
         luci-app-amlogic nikki luci-app-nikki tailscale luci-app-tailscale oaf open-app-filter luci-app-oaf \
-        easytier luci-app-easytier msd_lite luci-app-msd_lite luci-app-pushbot luci-app-fileassistant
+        easytier luci-app-easytier msd_lite luci-app-msd_lite cups luci-app-cupsd luci-app-pushbot luci-app-fileassistant
 }
 
 install_feeds() {
@@ -221,7 +230,7 @@ install_fullconenat() {
 fix_mk_def_depends() {
     sed -i 's/libustream-mbedtls/libustream-openssl/g' $BUILD_DIR/include/target.mk 2>/dev/null
     if [ -f $BUILD_DIR/target/linux/qualcommax/Makefile ]; then
-        sed -i 's/wpad-basic-mbedtls/wpad-openssl/g' $BUILD_DIR/target/linux/qualcommax/Makefile
+        sed -i 's/wpad-openssl/wpad-mesh-openssl/g' $BUILD_DIR/target/linux/qualcommax/Makefile
     fi
 }
 
@@ -447,7 +456,7 @@ update_nss_pbuf_performance() {
 set_build_signature() {
     local file="$BUILD_DIR/feeds/luci/modules/luci-mod-status/htdocs/luci-static/resources/view/status/include/10_system.js"
     if [ -d "$(dirname "$file")" ] && [ -f $file ]; then
-        sed -i "s/(\(luciversion || ''\))/(\1) + (' \/ build by YX')/g" "$file"
+        sed -i "s/(\(luciversion || ''\))/(\1) + (' \/ build by ZqinKing')/g" "$file"
     fi
 }
 
@@ -788,6 +797,30 @@ update_smartdns_luci() {
     fi
 }
 
+update_diskman() {
+    local path="$BUILD_DIR/feeds/luci/applications/luci-app-diskman"
+    if [ -d "$path" ]; then
+        cd "$BUILD_DIR/feeds/luci/applications" || return # 显式路径避免歧义
+        \rm -rf "luci-app-diskman"                        # 直接删除目标目录
+
+        git clone --filter=blob:none --no-checkout https://github.com/lisaac/luci-app-diskman.git diskman || return
+        cd diskman || return
+
+        git sparse-checkout init --cone
+        git sparse-checkout set applications/luci-app-diskman || return # 错误处理
+
+        git checkout --quiet # 静默检出避免冗余输出
+
+        mv applications/luci-app-diskman ../luci-app-diskman || return # 添加错误检查
+        cd .. || return
+        \rm -rf diskman
+        cd "$BUILD_DIR"
+
+        sed -i 's/fs-ntfs /fs-ntfs3 /g' "$path/Makefile"
+        sed -i '/ntfs-3g-utils /d' "$path/Makefile"
+    fi
+}
+
 main() {
     clone_repo
     clean_up
@@ -830,6 +863,7 @@ main() {
     update_lucky
     fix_rust_compile_error
     update_smartdns_luci
+    update_diskman
     install_feeds
     support_fw4_adg
     update_script_priority
@@ -837,8 +871,8 @@ main() {
     update_geoip
     update_package "runc" "releases" "v1.2.6"
     update_package "containerd" "releases" "v1.7.27"
-    update_package "docker" "tags"
-    update_package "dockerd"
+    update_package "docker" "tags" "v28.2.2"
+    update_package "dockerd" "releases" "v28.2.2"
     # update_package "xray-core"
     # update_proxy_app_menu_location
     # update_dns_app_menu_location
